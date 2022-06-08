@@ -1,0 +1,26 @@
+f1 = LOAD 'file1_ques2.csv' USING PigStorage(',') as (id:int,name:chararray,purchase:int,note:chararray);
+f2 = LOAD 'file2_ques2.csv' USING PigStorage(',') as (id:int,name:chararray,purchase:int,note:chararray);
+f3 = LOAD 'file3_ques2.csv' USING PigStorage(',') as (id:int,name:chararray,purchase:int,note:chararray);
+f4 = LOAD 'file4_ques2.csv' USING PigStorage(',') as (id:int,name:chararray,purchase:int,note:chararray);
+
+unionfiles = UNION f1,f2,f3,f4;
+
+/* group file by name,id */ 
+
+group_by_id_name = GROUP unionfiles BY (name,id);
+
+
+/* using group to get name and id once */ 
+/* sum, min, and max per field */ 
+
+outputable = FOREACH group_by_id_name GENERATE
+group,
+'Total purchases is:',
+SUM(unionfiles.purchase),
+'The min purchase is:',
+MIN(unionfiles.purchase),
+'The max purchase is:',
+MAX(unionfiles.purchase);
+
+SH echo '************************************** Output2.1 ***********************************';
+DUMP outputable; 

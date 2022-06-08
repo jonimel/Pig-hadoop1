@@ -1,0 +1,2 @@
+************************************** Output2.2 ***********************************
+(Total customers purchases is:,122380,The min purchase is:,204,The max purchase is:,995)

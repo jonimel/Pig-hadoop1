@@ -1,0 +1,48 @@
+data = LOAD '{file1.csv,file2.csv,file3.csv,file4.csv}'
+USING PigStorage(',') as 
+(name:chararray, id:int,  purchase1:int, purchase2:int, purchase3:int, purchase4:int, purchase5:int, purchase6:int, purchase7:int,
+text1:chararray, text2:chararray, text3:chararray, text4:chararray, text5:chararray);
+
+/* Task 1 */
+
+                          /* order the data */
+order_by_id = ORDER data BY id;
+
+                          /* group by name and id */
+
+group_by_id = GROUP order_by_id BY (name,id);
+
+                      /* sum and avg every field by customer */ 
+grouped_data = FOREACH group_by_id GENERATE	
+	group,
+	SUM(order_by_id.purchase1) as total_purchase1:int,
+	SUM(order_by_id.purchase2) as total_purchase2:int,
+	SUM(order_by_id.purchase3) as total_purchase3:int,
+	SUM(order_by_id.purchase4) as total_purchase4:int,
+	SUM(order_by_id.purchase5) as total_purchase5:int,
+	SUM(order_by_id.purchase6) as total_purchase6:int,
+	SUM(order_by_id.purchase7) as total_purchase7:int,
+	AVG(order_by_id.purchase1) as avg_purchase1:float,
+	AVG(order_by_id.purchase2) as avg_purchase2:float,
+	AVG(order_by_id.purchase3) as avg_purchase3:float,
+	AVG(order_by_id.purchase4) as avg_purchase4:float,
+	AVG(order_by_id.purchase5) as avg_purchase5:float,
+	AVG(order_by_id.purchase6) as avg_purchase6:float,
+	AVG(order_by_id.purchase7) as avg_purchase7:float;
+
+SH echo '********************************************** output ques1.1 ***********************************';                           
+								 
+outputable = FOREACH grouped_data GENERATE
+group,
+(total_purchase1 + total_purchase2 + total_purchase3 + total_purchase4 + total_purchase5 + total_purchase6 + total_purchase7) as sum_of_purchases:int,
+((avg_purchase1 + avg_purchase2 + avg_purchase3 + avg_purchase4 + avg_purchase5 + avg_purchase6 + avg_purchase7)/7) as Avg_of_purchases:Float,
+(
+CASE                                        /* T = 690   R = 520  */
+WHEN ((avg_purchase1 + avg_purchase2 + avg_purchase3 + avg_purchase4 + avg_purchase5 + avg_purchase6 + avg_purchase7)/7) > 690 THEN 'High average'
+WHEN ((avg_purchase1 + avg_purchase2 + avg_purchase3 + avg_purchase4 + avg_purchase5 + avg_purchase6 + avg_purchase7)/7) > 520 THEN 'Mid average'
+WHEN ((avg_purchase1 + avg_purchase2 + avg_purchase3 + avg_purchase4 + avg_purchase5 + avg_purchase6 + avg_purchase7)/7) > 0 THEN 'Low average'
+END) as HighMidLow:chararray;
+
+question1_1output = ORDER outputable BY Avg_of_purchases DESC; 
+
+DUMP question1_1output;

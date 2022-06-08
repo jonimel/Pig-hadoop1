@@ -1,0 +1,125 @@
+data = LOAD '{file1.csv,file2.csv,file3.csv,file4.csv}'    /* load data */
+USING PigStorage(',') as 
+(name:chararray, id:int,  purchase1:int, purchase2:int, purchase3:int, purchase4:int, purchase5:int, purchase6:int, purchase7:int,
+text1:chararray, text2:chararray, text3:chararray, text4:chararray, text5:chararray);
+
+ 
+
+help_table = FOREACH data GENERATE       /* create a table with aliases for later */
+	/*1*/	name,
+	/*2*/	id,
+	/*3*/	LOWER(text1) AS lower_char_text1,
+	/*4*/	SIZE(text1) AS amount_of_chars_text1, 
+	/*5*/	UCFIRST(LOWER(REPLACE(text1,'the ','')),' ',50) AS new_text1,
+	/*6*/	SIZE(REPLACE(text1,'the ','')) AS new_text1_amount_of_chars,
+	/*7*/	SIZE(text1) - SIZE(REPLACE(text1,'the','')) AS chars_deleted_text1,
+	/*8*/	SIZE(STRSPLIT(text1,' ',50)) AS amount_words_text1_new,
+	/*9*/	LOWER(text5) AS lower_char_text5,
+	/*10*/	SIZE(text5) AS amount_of_chars_text5,
+	/*11*/	UCFIRST(LOWER(REPLACE(text5,'if ',''))) AS new_text5,
+	/*12*/	SIZE(REPLACE(text5,'if ','')) AS new_text5_amount_of_chars,
+	/*13*/	SIZE(text5) - SIZE(REPLACE(text5,'if','')) AS chars_deleted_text5,
+	/*14*/	SIZE(STRSPLIT(text5,' ',50)) AS amount_words_text5_new,
+	/*15*/	SIZE(CONCAT(text1,text5)) AS connect_text1_text5;
+
+
+outputable1 = FOREACH help_table GENERATE   /* output table /*
+	/*1*/	name,
+	/*2*/	id,
+	/*3*/	lower_char_text1,
+	/*4*/	amount_of_chars_text1,                  /* creating a case for ques5 */ 
+	/*5*/	TRIM(CONCAT(
+				 (CASE 
+					WHEN UCFIRST(STRSPLIT(new_text1).$0) IS NULL THEN ''
+					WHEN UCFIRST(STRSPLIT(new_text1).$0) IS NOT NULL THEN UCFIRST(STRSPLIT(new_text1).$0)
+					END),' ',
+				 (CASE 
+					WHEN UCFIRST(STRSPLIT(new_text1).$1) IS NULL THEN ''
+					WHEN UCFIRST(STRSPLIT(new_text1).$1) IS NOT NULL THEN UCFIRST(STRSPLIT(new_text1).$1)
+					END),' ',
+				 (CASE 
+					WHEN UCFIRST(STRSPLIT(new_text1).$2) IS NULL THEN ''
+					WHEN UCFIRST(STRSPLIT(new_text1).$2) IS NOT NULL THEN UCFIRST(STRSPLIT(new_text1).$2)
+					END),' ',
+				 (CASE 
+					WHEN UCFIRST(STRSPLIT(new_text1).$3) IS NULL THEN ''
+					WHEN UCFIRST(STRSPLIT(new_text1).$3) IS NOT NULL THEN UCFIRST(STRSPLIT(new_text1).$3)
+					END),' ',
+				 (CASE 
+					WHEN UCFIRST(STRSPLIT(new_text1).$4) IS NULL THEN ''
+					WHEN UCFIRST(STRSPLIT(new_text1).$4) IS NOT NULL THEN UCFIRST(STRSPLIT(new_text1).$4)
+					END),' ',
+				 (CASE 
+					WHEN UCFIRST(STRSPLIT(new_text1).$5) IS NULL THEN ''
+					WHEN UCFIRST(STRSPLIT(new_text1).$5) IS NOT NULL THEN UCFIRST(STRSPLIT(new_text1).$5)
+					END),' ',
+				(CASE 
+					WHEN UCFIRST(STRSPLIT(new_text1).$6) IS NULL THEN ''
+					WHEN UCFIRST(STRSPLIT(new_text1).$6) IS NOT NULL THEN UCFIRST(STRSPLIT(new_text1).$6)
+					END),' ',
+				 (CASE 
+					WHEN UCFIRST(STRSPLIT(new_text1).$7) IS NULL THEN ''
+					WHEN UCFIRST(STRSPLIT(new_text1).$7) IS NOT NULL THEN UCFIRST(STRSPLIT(new_text1).$7)
+					END),' ',
+				 (CASE 
+					WHEN UCFIRST(STRSPLIT(new_text1).$8) IS NULL THEN ''
+					WHEN UCFIRST(STRSPLIT(new_text1).$8) IS NOT NULL THEN UCFIRST(STRSPLIT(new_text1).$8)
+					END))) AS new_text1_big_first,
+					
+	/*6*/	new_text1_amount_of_chars,
+	/*7*/	chars_deleted_text1,
+	/*8*/	SIZE(STRSPLIT(new_text1,' ',50)),
+	/*9*/	lower_char_text5,
+	/*10*/	amount_of_chars_text5,
+	/*11*/	TRIM(CONCAT(
+				 (CASE 
+					WHEN UCFIRST(STRSPLIT(new_text5).$0) IS NULL THEN ''
+					WHEN UCFIRST(STRSPLIT(new_text5).$0) IS NOT NULL THEN UCFIRST(STRSPLIT(new_text5).$0)
+					END),' ',
+				 (CASE 
+					WHEN UCFIRST(STRSPLIT(new_text5).$1) IS NULL THEN ''
+					WHEN UCFIRST(STRSPLIT(new_text5).$1) IS NOT NULL THEN UCFIRST(STRSPLIT(new_text5).$1)
+					END),' ',
+				 (CASE 
+					WHEN UCFIRST(STRSPLIT(new_text5).$2) IS NULL THEN ''
+					WHEN UCFIRST(STRSPLIT(new_text5).$2) IS NOT NULL THEN UCFIRST(STRSPLIT(new_text5).$2)
+					END),' ',
+				 (CASE 
+					WHEN UCFIRST(STRSPLIT(new_text5).$3) IS NULL THEN ''
+					WHEN UCFIRST(STRSPLIT(new_text5).$3) IS NOT NULL THEN UCFIRST(STRSPLIT(new_text5).$3)
+					END),' ',
+				 (CASE 
+					WHEN UCFIRST(STRSPLIT(new_text5).$4) IS NULL THEN ''
+					WHEN UCFIRST(STRSPLIT(new_text5).$4) IS NOT NULL THEN UCFIRST(STRSPLIT(new_text5).$4)
+					END),' ',
+				 (CASE 
+					WHEN UCFIRST(STRSPLIT(new_text5).$5) IS NULL THEN ''
+					WHEN UCFIRST(STRSPLIT(new_text5).$5) IS NOT NULL THEN UCFIRST(STRSPLIT(new_text5).$5)
+					END),' ',
+				 (CASE 
+					WHEN UCFIRST(STRSPLIT(new_text5).$6) IS NULL THEN ''
+					WHEN UCFIRST(STRSPLIT(new_text5).$6) IS NOT NULL THEN UCFIRST(STRSPLIT(new_text5).$6)
+					END),' ',
+				 (CASE 
+					WHEN UCFIRST(STRSPLIT(new_text5).$7) IS NULL THEN ''
+					WHEN UCFIRST(STRSPLIT(new_text5).$7) IS NOT NULL THEN UCFIRST(STRSPLIT(new_text5).$7)
+					END),' ',
+				 (CASE 
+					WHEN UCFIRST(STRSPLIT(new_text5).$8) IS NULL THEN ''
+					WHEN UCFIRST(STRSPLIT(new_text5).$8) IS NOT NULL THEN UCFIRST(STRSPLIT(new_text5).$8)												
+					
+					END))) AS new_text5_big_first,
+	/*12*/	new_text5_amount_of_chars,
+	/*13*/	chars_deleted_text5,
+	/*14*/	SIZE(STRSPLIT(new_text5,' ',50)),
+	/*15*/	connect_text1_text5,
+	/*17*/	SIZE(STRSPLIT(UCFIRST(TRIM(REPLACE(LOWER(new_text1),'the',''))),' ',50))
+	+ SIZE(STRSPLIT(UCFIRST(TRIM(REPLACE(LOWER(new_text5),'if',''))),' ',50)) AS amount_of_text1_text5;
+	
+	
+SH echo '********************************************** output ques 3 ***********************************';		
+
+ordered_table = ORDER outputable1 BY amount_of_text1_text5 DESC;	 /* order the table */ 
+DUMP ordered_table;
+
+/* i did not succeed questions 16 and 18 */
